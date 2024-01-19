@@ -1,5 +1,5 @@
 # youtube_video_mp4_downloaer
-YouTube Video MP4 Downloader
+YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separate audio and video mp4 files, then merges them back together (creates 3 files total)
 
 ## Prerequisites
 - pytube (https://pypi.org/project/pytube/)
