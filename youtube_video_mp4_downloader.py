@@ -59,4 +59,4 @@ if __name__ == '__main__':
     if args.url is None:
         print("Not running script because url was not passed. Please pass in an YouTube video url.")
     else:
-        main(args.url, args.audio_only, args.video_only, args.destination, args.merge)\
+        main(args.url, args.audio_only, args.video_only, args.destination, args.merge)
