@@ -2,11 +2,12 @@
 from pytube import YouTube
 import ffmpeg
 import argparse
-
+import os
 
 def main(url, audio_only, video_only, destination, convert):
     # url input from user
     yt = YouTube(url)
+    yt.bypass_age_gate()
     print()
     print("YouTube video title: {}".format(yt.title))
     print()
@@ -37,10 +38,11 @@ def main(url, audio_only, video_only, destination, convert):
 
     # ffmpeg conversion
 
-    if convert and download_both: 
-        video = ffmpeg.input("video.mp4")
-        audio = ffmpeg.input("audio.mp4")
-        ffmpeg.concat(video, audio, v=1, a=1).output("result.mp4").run()
+    if convert and download_both:
+        video = ffmpeg.input(os.path.join(destination, "video.mp4"))
+        audio = ffmpeg.input(os.path.join(destination, "audio.mp4"))
+        ffmpeg.concat(video, audio, v=1, a=1).output(os.path.join(destination,"result.mp4")).run()
+        
         # result of success 
         print(yt.title + " has been successfully converted to mp4.")
         print()
