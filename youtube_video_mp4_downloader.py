@@ -3,8 +3,6 @@ from pytube import YouTube
 import ffmpeg
 import argparse
 
-  
-
 
 def main(url, audio_only, video_only, destination, convert):
     # url input from user
@@ -47,7 +45,6 @@ def main(url, audio_only, video_only, destination, convert):
         print(yt.title + " has been successfully converted to mp4.")
         print()
 
-    
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -62,4 +59,4 @@ if __name__ == '__main__':
     if args.url is None:
         print("Not running script because url was not passed. Please pass in an YouTube video url.")
     else:
-        main(args.url, args.audio_only, args.video_only, args.destination, args.merge)
+        main(args.url, args.audio_only, args.video_only, args.destination, args.merge)\
