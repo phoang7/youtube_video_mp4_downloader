@@ -3,6 +3,7 @@ from pytube import YouTube
 import ffmpeg
 import argparse
 import os
+import subprocess
 
 def main(url, audio_only, video_only, destination, convert):
     # url input from user
@@ -15,6 +16,7 @@ def main(url, audio_only, video_only, destination, convert):
     # extract video of highest quality resolution possible.
     mp4_video_streams = yt.streams.filter(file_extension='mp4', adaptive=True, mime_type="video/mp4")
     video = mp4_video_streams.first()
+
 
     # extract audio of highest bit rate quality possible.
     mp4_audio_streams = yt.streams.filter(only_audio=True, mime_type="audio/mp4")
@@ -32,17 +34,19 @@ def main(url, audio_only, video_only, destination, convert):
     else:
         video.download(output_path=destination, filename="video.mp4") if video_only else audio.download(output_path=destination, filename="audio.mp4")
     
+    print("Converting mp4 audio to mp3...")
+    subprocess.run('ffmpeg -i audio.mp4 -f mp3 -ab 320000 -vn audio.mp3', shell=True)
+    print()
+
     # result of success 
     print(yt.title + " has been successfully downloaded as audio and video files separately.")
     print()
 
     # ffmpeg conversion
 
-    if convert and download_both:
-        video = ffmpeg.input(os.path.join(destination, "video.mp4"))
-        audio = ffmpeg.input(os.path.join(destination, "audio.mp4"))
-        ffmpeg.concat(video, audio, v=1, a=1).output(os.path.join(destination,"result.mp4")).run()
-        
+    if convert and download_both:        
+        subprocess.run('ffmpeg -i video.mp4 -i audio.mp4 -c:v copy -c:a copy output.mp4', shell=True)
+
         # result of success 
         print(yt.title + " has been successfully converted to mp4.")
         print()
