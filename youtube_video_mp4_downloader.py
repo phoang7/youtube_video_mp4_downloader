@@ -34,12 +34,13 @@ def main(url, audio_only, video_only, destination, convert):
     else:
         video.download(output_path=destination, filename="video.mp4") if video_only else audio.download(output_path=destination, filename="audio.mp4")
     
-    print("Converting mp4 audio to mp3...")
-    subprocess.run('ffmpeg -i audio.mp4 -f mp3 -ab 320000 -vn audio.mp3', shell=True)
-    print()
+    if audio_only or download_both:
+        print("Converting mp4 audio to mp3...")
+        subprocess.run('ffmpeg -i audio.mp4 -f mp3 -ab 320000 -vn audio.mp3', shell=True)
+        print()
 
     # result of success 
-    print(yt.title + " has been successfully downloaded as audio and video files separately.")
+    print(yt.title + " has been successfully downloaded as audio and/or video files separately.")
     print()
 
     # ffmpeg conversion
@@ -55,7 +56,7 @@ def main(url, audio_only, video_only, destination, convert):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
-    parser.add_argument("-ao", "--audio_only", default=0, type=int, help="only audio in mp4 format (0 for no [default], 1 for yes)")
+    parser.add_argument("-ao", "--audio_only", default=0, type=int, help="only audio in mp3 + mp4 format (0 for no [default], 1 for yes)")
     parser.add_argument("-vo", "--video_only", default=0, type=int, help="only video in mp4 format (0 for no [default], 1 for yes)")
     parser.add_argument("-dest", "--destination", default=".", type=str, help="destination directory to download mp4 file to, defaults to current directory")
     parser.add_argument("-m", "--merge", default=1, type=int, help="merge audio and video in mp4 format together (0 for no, 1 for yes [default])")
