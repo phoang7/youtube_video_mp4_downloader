@@ -4,6 +4,21 @@ import ffmpeg
 import argparse
 import os
 import subprocess
+import re
+
+def get_clean_video_title(video_title):
+    # Remove invalid characters for filenames
+    res = re.sub(r'[\/:*?"<>|]', '', video_title)
+
+    # Trim and replace spaces with underscores
+    res = res.strip().replace(' ', '_')
+
+    # Ensure the filename is not too long
+    max_filename_length = 255  # Maximum length for most file systems
+    if len(res) > max_filename_length:
+        res = res[:max_filename_length]
+
+    return res
 
 def main(url, audio_only, video_only, destination, convert):
     # url input from user
@@ -51,6 +66,9 @@ def main(url, audio_only, video_only, destination, convert):
         # result of success 
         print(yt.title + " has been successfully converted to mp4.")
         print()
+
+        clean_title = get_clean_video_title(yt.title)
+        os.rename('output.mp4', '{}.mp4'.format(clean_title))
 
 
 if __name__ == '__main__':
