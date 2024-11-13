@@ -4,7 +4,7 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 
 ## Prerequisites
 - pytube (https://pypi.org/project/pytube/)
-- ffmpeg (https://github.com/kkroening/ffmpeg-python)
+- ffmpeg (https://www.ffmpeg.org/, https://github.com/kkroening/ffmpeg-python)
 - pytubefix (https://pypi.org/project/pytubefix/)
 
 
