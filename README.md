@@ -1,5 +1,5 @@
 # youtube_video_mp4_downloader
-YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separate audio and video mp4 files, then merges them back together (creates 3 files total). Useful for avoiding ads on the YouTube player. Downloads at highest quality possible for both audio and video.
+YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separate audio and video mp4 files, then merges them back together (creates 3 files max if downloading + merging both audio and video streams). Useful for avoiding ads on the YouTube player. Downloads at highest quality possible for both audio and video.
 
 
 ## Prerequisites
@@ -13,6 +13,7 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 * -ao flag (defaults to 0) sets only audio in mp3 + mp4 format (0 for no, 1 for yes)
 * -vo flag (defaults to 0) sets only video in mp4 format (0 for no, 1 for yes)
 * -m flag (defaults to 1) merges audio and video in mp4 format togeher (0 for no, 1 for yes)
+* --auto flag (defaults to 1) automatically selects bitrate for both audio and video (0 for no, 1 for yes)
 
 
 ## Should I use pytube or pytubefix for downloading videos?
