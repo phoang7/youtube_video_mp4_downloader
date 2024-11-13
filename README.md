@@ -13,6 +13,7 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 * -ao flag (defaults to 0) sets only audio in mp3 + mp4 format (0 for no, 1 for yes)
 * -vo flag (defaults to 0) sets only video in mp4 format (0 for no, 1 for yes)
 * -m flag (defaults to 1) merges audio and video in mp4 format togeher (0 for no, 1 for yes)
+* --auto flag (defaults to 1) automatically selects bitrate for both audio and video (0 for no, 1 for yes)
 
 
 ## Should I use pytube or pytubefix for downloading videos?
