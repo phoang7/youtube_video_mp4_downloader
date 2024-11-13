@@ -57,12 +57,38 @@ def get_highest_quality_video_stream(yt):
         ex.add_note('Failed to fetch streams for YouTube instance.')
         raise
 
+def pick_quality_video_stream(yt):
+    # select quality resolution for video.
+    try:
+        itag = int(input('Input itag for video resolution quality: '))
+        video = yt.streams.filter(file_extension='mp4', adaptive=True,
+                                                mime_type='video/mp4').order_by('resolution').desc().get_by_itag(itag)
+        if video is None:
+            raise ValueError('No stream was found for given resolution {}'.format(itag))
+        return video
+    except Exception as ex:
+        ex.add_note('Failed to fetch streams for YouTube instance.')
+        raise
+
 def get_highest_quality_audio_stream(yt):
     # extract audio of highest bit rate quality possible.
     try:
         mp4_audio_streams = yt.streams.filter(only_audio=True,
                                             mime_type='audio/mp4').order_by('abr').desc()
         return mp4_audio_streams.first()
+    except Exception as ex:
+        ex.add_note('Failed to fetch streams for YouTube instance.')
+        raise
+
+def pick_quality_audio_stream(yt):
+    # select bit rate quality for audio
+    try:
+        itag = int(input('Input itag for audio bit rate quality: '))
+        audio = yt.streams.filter(only_audio=True,
+                                mime_type='audio/mp4').order_by('abr').desc().get_by_itag(itag)
+        if audio is None:
+            raise ValueError('No stream was found for given itag {}'.format(itag))
+        return audio
     except Exception as ex:
         ex.add_note('Failed to fetch streams for YouTube instance.')
         raise
@@ -101,7 +127,7 @@ def merge_streams(destination, convert, download_both, title):
             ex.add_note('ffmpeg merge command or renaming merged output file failed')
             raise
 
-def download_youtube_video_pytube(url, audio_only, video_only, destination, convert):
+def download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert):
     yt = None
     try:
         # url input from user
@@ -119,8 +145,8 @@ def download_youtube_video_pytube(url, audio_only, video_only, destination, conv
 
     list_youtube_streams_asc(yt)
 
-    video = get_highest_quality_video_stream(yt)
-    audio = get_highest_quality_audio_stream(yt)
+    video = get_highest_quality_video_stream(yt) if auto else pick_quality_video_stream(yt)
+    audio = get_highest_quality_audio_stream(yt) if auto else pick_quality_audio_stream(yt)
 
     list_selected_youtube_streams(video, audio)
 
@@ -133,7 +159,7 @@ def download_youtube_video_pytube(url, audio_only, video_only, destination, conv
     merge_streams(destination, convert, download_both, yt.title)
 
 
-def download_youtube_video_pytubefix(url, audio_only, video_only, destination, convert):
+def download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, convert):
     yt = None
     try:
         # url input from user
@@ -150,8 +176,8 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, c
 
     list_youtube_streams_asc(yt)
 
-    video = get_highest_quality_video_stream(yt)
-    audio = get_highest_quality_audio_stream(yt)
+    video = get_highest_quality_video_stream(yt) if auto else pick_quality_video_stream(yt)
+    audio = get_highest_quality_audio_stream(yt) if auto else pick_quality_audio_stream(yt)
 
     list_selected_youtube_streams(video, audio)
 
@@ -164,38 +190,36 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, c
     merge_streams(destination, convert, download_both, yt.title)
 
 
-def main(url, audio_only, video_only, destination, convert):
+def main(url, audio_only, video_only, destination, auto, convert):
     passed = False
-    '''
     print('Attepting to download video with pytube.')
     try:
-        download_youtube_video_pytube(url, audio_only, video_only, destination, convert)
+        download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert)
         print('Dowloaded video succcessfully with pytube.\n')
         passed = True
     except Exception as ex:
         print('Failed to dowload video with pytube. Exception is {}\n'.format(ex))
-    '''
     if not passed:
         print('Attepting to download video with pytubefix.')
         try:
-            download_youtube_video_pytubefix(url, audio_only, video_only, destination, convert)
+            download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, convert)
             print('Dowloaded video succcessfully with pytubefix.\n')
         except Exception as ex:
             print('Failed to dowload video with pytube. Exception is {}\n'.format(ex))
-        
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     
-    parser.add_argument('-ao', '--audio_only', default=0, type=int, help='only audio in mp3 + mp4 format (0 for no [default], 1 for yes)')
-    parser.add_argument('-vo', '--video_only', default=0, type=int, help='only video in mp4 format (0 for no [default], 1 for yes)')
+    parser.add_argument('-ao', '--audio_only', default=0, type=int, help='only audio in mp3 + mp4 format (0 for no [default], 1 for yes)' , choices=(0,1))
+    parser.add_argument('-vo', '--video_only', default=0, type=int, help='only video in mp4 format (0 for no [default], 1 for yes)', choices=(0,1))
     parser.add_argument('-dest', '--destination', default='.', type=str, help='destination directory (absolute path) to download mp4 file to, defaults to current directory')
-    parser.add_argument('-m', '--merge', default=1, type=int, help='merge audio and video in mp4 format together (0 for no, 1 for yes [default])')
+    parser.add_argument('-m', '--merge', default=1, type=int, help='merge audio and video in mp4 format together (0 for no, 1 for yes [default])', choices=(0,1))
     parser.add_argument('-u', '--url', type=str, help='URL of the video to download', required=True)
+    parser.add_argument('-a', '--auto', default=1, type=int, help='automatically selects bitrate for both audio and video (0 for no, 1 for yes [default])', choices=(0,1))
     
     args = parser.parse_args()
     if args.url is None:
         print('Not running script because url was not passed. Please pass in an YouTube video url.')
     else:
-        main(args.url, args.audio_only, args.video_only, args.destination, args.merge)
+        main(args.url, args.audio_only, args.video_only, args.destination, args.auto, args.merge)
