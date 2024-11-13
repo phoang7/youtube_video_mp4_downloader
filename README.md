@@ -9,7 +9,7 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 
 
 ## Usage
-* Pass YouTube video url (-u flag) and directory (-dest flag, requires absolute path, defaults to current directory) to save the video, audio, combined video and audio file to.
+* Pass YouTube video url (-u flag, required) and directory (-dest flag, requires absolute path, defaults to current directory) to save the video, audio, combined video and audio file to.
 * -ao flag (defaults to 0) sets only audio in mp3 + mp4 format (0 for no, 1 for yes)
 * -vo flag (defaults to 0) sets only video in mp4 format (0 for no, 1 for yes)
 * -m flag (defaults to 1) merges audio and video in mp4 format togeher (0 for no, 1 for yes)
