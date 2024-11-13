@@ -60,11 +60,11 @@ def get_highest_quality_video_stream(yt):
 def pick_quality_video_stream(yt):
     # select quality resolution for video.
     try:
-        itag = int(input('Input itag for video resolution quality: '))
+        itag = int(input('Input valid itag for video resolution quality: '))
         video = yt.streams.filter(file_extension='mp4', adaptive=True,
-                                                mime_type='video/mp4').order_by('resolution').desc().get_by_itag(itag)
+                            mime_type='video/mp4').order_by('resolution').desc().get_by_itag(itag)
         if video is None:
-            raise ValueError('No stream was found for given resolution {}'.format(itag))
+            raise ValueError('No video stream was found for given itag {}'.format(itag))
         return video
     except Exception as ex:
         ex.add_note('Failed to fetch streams for YouTube instance.')
@@ -83,11 +83,11 @@ def get_highest_quality_audio_stream(yt):
 def pick_quality_audio_stream(yt):
     # select bit rate quality for audio
     try:
-        itag = int(input('Input itag for audio bit rate quality: '))
+        itag = int(input('Input valid itag for audio bit rate quality: '))
         audio = yt.streams.filter(only_audio=True,
                                 mime_type='audio/mp4').order_by('abr').desc().get_by_itag(itag)
         if audio is None:
-            raise ValueError('No stream was found for given itag {}'.format(itag))
+            raise ValueError('No audio stream was found for given itag {}'.format(itag))
         return audio
     except Exception as ex:
         ex.add_note('Failed to fetch streams for YouTube instance.')
@@ -205,7 +205,7 @@ def main(url, audio_only, video_only, destination, auto, convert):
             download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, convert)
             print('Dowloaded video succcessfully with pytubefix.\n')
         except Exception as ex:
-            print('Failed to dowload video with pytube. Exception is {}\n'.format(ex))
+            print('Failed to dowload video with pytubefix. Exception is {}\n'.format(ex))
 
 
 if __name__ == '__main__':
