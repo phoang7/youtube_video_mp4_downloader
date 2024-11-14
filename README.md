@@ -4,7 +4,7 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 
 ## Prerequisites
 - pytube (https://pypi.org/project/pytube/)
-- ffmpeg (https://www.ffmpeg.org/)
+- ffmpeg (https://www.ffmpeg.org/, not installed in virtual environment)
 - pytubefix (https://pypi.org/project/pytubefix/)
 
 
@@ -23,4 +23,4 @@ You will need to determine whether which option/module works for you and if both
 
 
 ## Should I use a virtual environlment?
-Yes you should. You can follow the steps to create the virtual environment here - https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments. You should create the virtual environment in the same directory where you downloaded the repository, then use pip in the virtual environment to install the packages described in the prerequisites section.
+Yes you should. You can follow the steps to create the virtual environment here - https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments. You should create the virtual environment in the same directory where you downloaded the repository, then use pip in the virtual environment to install the packages described in the prerequisites section except for ffmpeg. ffmpeg will need to be installed separately outside the virtual environment.
