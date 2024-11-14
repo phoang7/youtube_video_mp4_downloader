@@ -1,6 +1,5 @@
 from pytube import YouTube
 from pytubefix import YouTube as YouTubeFix
-import ffmpeg
 import argparse
 import os
 import subprocess
@@ -195,17 +194,17 @@ def main(url, audio_only, video_only, destination, auto, convert):
     print('Attepting to download video with pytube.')
     try:
         download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert)
-        print('Dowloaded video succcessfully with pytube.\n')
+        print('Downloaded video succcessfully with pytube.\n')
         passed = True
     except Exception as ex:
-        print('Failed to dowload video with pytube. Exception is {}\n'.format(ex))
+        print('Failed to download video with pytube. Exception is {}\n'.format(ex))
     if not passed:
         print('Attepting to download video with pytubefix.')
         try:
             download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, convert)
-            print('Dowloaded video succcessfully with pytubefix.\n')
+            print('Downloaded video succcessfully with pytubefix.\n')
         except Exception as ex:
-            print('Failed to dowload video with pytubefix. Exception is {}\n'.format(ex))
+            print('Failed to download video with pytubefix. Exception is {}\n'.format(ex))
 
 
 if __name__ == '__main__':
