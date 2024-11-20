@@ -1,9 +1,11 @@
 from pytube import YouTube
 from pytubefix import YouTube as YouTubeFix
+from ffmpeg_check import is_ffmpeg_installed
 import argparse
 import os
 import subprocess
 import re
+
 
 def get_clean_video_title(video_title):
     # Remove invalid characters for filenames
@@ -18,6 +20,7 @@ def get_clean_video_title(video_title):
         res = res[:max_filename_length]
 
     return res
+
 
 def list_youtube_streams_asc(yt):
     try:
@@ -38,6 +41,7 @@ def list_youtube_streams_asc(yt):
         ex.add_note('Failed to fetch streams for YouTube instance.')
         raise
 
+
 def list_selected_youtube_streams(video, audio):
     if video is not None:
         print('video in mp4 format:\nitag={} mime_type={} res={} fps={} vcodec={}\n'
@@ -45,6 +49,7 @@ def list_selected_youtube_streams(video, audio):
     if audio is not None:
         print('audio in mp4 format:\nitag={} mime_type={} abr={} acodec={}\n'
             .format(audio.itag, audio.mime_type, audio.abr, audio.audio_codec))
+
 
 def get_highest_quality_video_stream(yt):
     # extract video of highest quality resolution possible.
@@ -55,6 +60,7 @@ def get_highest_quality_video_stream(yt):
     except Exception as ex:
         ex.add_note('Failed to fetch streams for YouTube instance.')
         raise
+
 
 def pick_quality_video_stream(yt):
     # select quality resolution for video.
@@ -69,6 +75,7 @@ def pick_quality_video_stream(yt):
         ex.add_note('Failed to fetch streams for YouTube instance.')
         raise
 
+
 def get_highest_quality_audio_stream(yt):
     # extract audio of highest bit rate quality possible.
     try:
@@ -78,6 +85,7 @@ def get_highest_quality_audio_stream(yt):
     except Exception as ex:
         ex.add_note('Failed to fetch streams for YouTube instance.')
         raise
+
 
 def pick_quality_audio_stream(yt):
     # select bit rate quality for audio
@@ -92,6 +100,7 @@ def pick_quality_audio_stream(yt):
         ex.add_note('Failed to fetch streams for YouTube instance.')
         raise
 
+
 def download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both):
     try:
         dest = os.path.abspath(destination)
@@ -103,15 +112,22 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
 
         if audio_only or download_both:
             print('Converting mp4 audio to mp3...')
-            mp4_path = os.path.join(dest, 'audio.mp4')
-            mp3_path = os.path.join(dest, 'audio.mp3')
-            subprocess.run('ffmpeg -y -i {} -f mp3 -ab 320000 -vn {}'.format(mp4_path, mp3_path), shell=True)
+            if is_ffmpeg_installed():
+                mp4_path = os.path.join(dest, 'audio.mp4')
+                mp3_path = os.path.join(dest, 'audio.mp3')
+                subprocess.run('ffmpeg -y -i {} -f mp3 -ab 320000 -vn {}'.format(mp4_path, mp3_path), shell=True)
+            else:
+                print('ffmpeg is not installed, canceling mp4 to mp3 conversion operation.')
             print()
     except Exception as ex:
         ex.add_note('Failed to download stream(s) or ffmpeg command failed.')
         raise
 
+
 def merge_streams(destination, convert, download_both, title):
+    if not is_ffmpeg_installed():
+        print('ffmpeg is not installed, canceling merge streams operation.') 
+        return
     if convert and download_both:
         try:
             dest = os.path.abspath(destination)
@@ -133,6 +149,7 @@ def merge_streams(destination, convert, download_both, title):
         except Exception as ex:
             ex.add_note('ffmpeg merge command or renaming merged output file failed')
             raise
+
 
 def download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert):
     yt = None
@@ -199,6 +216,7 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, a
 
 def main(url, audio_only, video_only, destination, auto, convert):
     passed = False
+    '''
     print('Attepting to download video with pytube.')
     try:
         download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert)
@@ -206,6 +224,7 @@ def main(url, audio_only, video_only, destination, auto, convert):
         passed = True
     except Exception as ex:
         print('Failed to download video with pytube. Exception is {}\n'.format(ex))
+    '''
     if not passed:
         print('Attepting to download video with pytubefix.')
         try:
