@@ -5,6 +5,7 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 ## Prerequisites
 - pytube (https://pypi.org/project/pytube/)
 - ffmpeg (https://www.ffmpeg.org/, not installed in virtual environment)
+  - You can check if ffmpeg is installed in your environment by running `ffmpeg_check.py`
 - pytubefix (https://pypi.org/project/pytubefix/)
 
 
