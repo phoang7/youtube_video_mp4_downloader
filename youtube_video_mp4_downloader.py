@@ -29,7 +29,7 @@ def list_youtube_streams_asc(yt):
                           stream.fps, stream.video_codec))
         print()
         print('YouTube audio streams in ascending order in quality:')
-        for stream in yt.streams.filter(only_audio=True, 
+        for stream in yt.streams.filter(only_audio=True,
                                         mime_type='audio/mp4').order_by('abr').asc():
             print('itag={} mime_type={} abr={} acodec={}'
                   .format(stream.itag, stream.mime_type, stream.abr, stream.audio_codec))
@@ -94,15 +94,18 @@ def pick_quality_audio_stream(yt):
 
 def download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both):
     try:
+        dest = os.path.abspath(destination)
         if download_both:
-            video.download(output_path=destination, filename='video.mp4') 
-            audio.download(output_path=destination, filename='audio.mp4')
+            video.download(output_path=dest, filename='video.mp4')
+            audio.download(output_path=dest, filename='audio.mp4')
         else:
-            video.download(output_path=destination, filename='video.mp4') if video_only else audio.download(output_path=destination, filename='audio.mp4')
-        
+            video.download(output_path=dest, filename='video.mp4') if video_only else audio.download(output_path=dest, filename='audio.mp4')
+
         if audio_only or download_both:
             print('Converting mp4 audio to mp3...')
-            subprocess.run('ffmpeg -y -i audio.mp4 -f mp3 -ab 320000 -vn {}\\audio.mp3'.format(destination), shell=True)
+            mp4_path = os.path.join(dest, 'audio.mp4')
+            mp3_path = os.path.join(dest, 'audio.mp3')
+            subprocess.run('ffmpeg -y -i {} -f mp3 -ab 320000 -vn {}'.format(mp4_path, mp3_path), shell=True)
             print()
     except Exception as ex:
         ex.add_note('Failed to download stream(s) or ffmpeg command failed.')
@@ -111,16 +114,21 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
 def merge_streams(destination, convert, download_both, title):
     if convert and download_both:
         try:
-            cmd = 'ffmpeg -y -i {}\\video.mp4 -i {}\\audio.mp4 -c:v copy -c:a copy {}\\output.mp4'
-            subprocess.run(cmd.format(destination, destination, destination), shell=True)
+            dest = os.path.abspath(destination)
+            video_path = os.path.join(dest, 'video.mp4')
+            audio_path = os.path.join(dest, 'audio.mp4')
+            output_path = os.path.join(dest, 'output.mp4')
+            cmd = 'ffmpeg -y -i {} -i {} -c:v copy -c:a copy {}'
+            subprocess.run(cmd.format(video_path, audio_path, output_path), shell=True)
 
-            # result of success 
+            # result of success
             print('{} has been successfully converted to mp4. Video and audio streams were merged.'
                 .format(title))
             print()
 
             clean_title = get_clean_video_title(title)
-            os.replace('{}\\output.mp4'.format(destination), '{}\\{}.mp4'.format(destination, clean_title))
+            rename_path = os.path.join(dest, f'{clean_title}.mp4')
+            os.replace('{}'.format(output_path), '{}'.format(rename_path))
             print('Merged output file name is {}'.format(clean_title))
         except Exception as ex:
             ex.add_note('ffmpeg merge command or renaming merged output file failed')
@@ -209,14 +217,14 @@ def main(url, audio_only, video_only, destination, auto, convert):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    
+
     parser.add_argument('-ao', '--audio_only', default=0, type=int, help='only audio in mp3 + mp4 format (0 for no [default], 1 for yes)' , choices=(0,1))
     parser.add_argument('-vo', '--video_only', default=0, type=int, help='only video in mp4 format (0 for no [default], 1 for yes)', choices=(0,1))
     parser.add_argument('-dest', '--destination', default='.', type=str, help='destination directory (absolute path) to download mp4 file to, defaults to current directory')
     parser.add_argument('-m', '--merge', default=1, type=int, help='merge audio and video in mp4 format together (0 for no, 1 for yes [default])', choices=(0,1))
     parser.add_argument('-u', '--url', type=str, help='URL of the video to download', required=True)
     parser.add_argument('-a', '--auto', default=1, type=int, help='automatically selects bitrate for both audio and video (0 for no, 1 for yes [default])', choices=(0,1))
-    
+
     args = parser.parse_args()
     if args.url is None:
         print('Not running script because url was not passed. Please pass in an YouTube video url.')
