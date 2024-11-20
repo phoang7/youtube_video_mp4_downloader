@@ -216,7 +216,6 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, a
 
 def main(url, audio_only, video_only, destination, auto, convert):
     passed = False
-    '''
     print('Attepting to download video with pytube.')
     try:
         download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert)
@@ -224,7 +223,6 @@ def main(url, audio_only, video_only, destination, auto, convert):
         passed = True
     except Exception as ex:
         print('Failed to download video with pytube. Exception is {}\n'.format(ex))
-    '''
     if not passed:
         print('Attepting to download video with pytubefix.')
         try:
