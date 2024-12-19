@@ -1,5 +1,6 @@
 from pytube import YouTube
 from pytubefix import YouTube as YouTubeFix
+from pytubefix.cli import on_progress
 from ffmpeg_check import is_ffmpeg_installed
 import argparse
 import os
@@ -181,7 +182,7 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, a
     yt = None
     try:
         # url input from user
-        yt = YouTubeFix(url)
+        yt = YouTubeFix(url, on_progress_callback=on_progress)
     except Exception as ex:
         print('Failed to create YouTube instance from url {}\n Exception is {}'.format(url, ex))
         print('Exception type: {}.\n'.format(type(ex)))
