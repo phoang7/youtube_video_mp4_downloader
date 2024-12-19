@@ -98,7 +98,7 @@ def pick_quality_audio_stream(yt):
         raise
 
 
-def download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both):
+def download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both, create_mp3):
     try:
         dest = os.path.abspath(destination)
         if download_both:
@@ -106,7 +106,7 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
             audio.download(output_path=dest, filename='audio.mp4')
         else:
             video.download(output_path=dest, filename='video.mp4') if video_only else audio.download(output_path=dest, filename='audio.mp4')
-        if audio_only or download_both:
+        if (audio_only or download_both) and create_mp3:
             print('Converting mp4 audio to mp3...')
             if is_ffmpeg_installed():
                 mp4_path = os.path.join(dest, 'audio.mp4')
@@ -120,12 +120,12 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
         raise
 
 
-def merge_streams(destination, convert, download_both, title):
-    print('Merging mp4 video and audio streams together...')
+def merge_streams(destination, merge, download_both, title):
     if not is_ffmpeg_installed():
         print('ffmpeg is not installed, canceling merge streams operation.') 
         return
-    if convert and download_both:
+    if merge and download_both:
+        print('Merging mp4 video and audio streams together...')
         try:
             dest = os.path.abspath(destination)
             video_path = os.path.join(dest, 'video.mp4')
@@ -146,7 +146,7 @@ def merge_streams(destination, convert, download_both, title):
             raise
 
 
-def download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert):
+def download_youtube_video_pytube(url, audio_only, video_only, destination, auto, merge, create_mp3):
     yt = None
     try:
         # url input from user
@@ -170,14 +170,14 @@ def download_youtube_video_pytube(url, audio_only, video_only, destination, auto
     list_selected_youtube_streams(video, audio)
 
     download_both = (audio_only and video_only) or (not audio_only and not video_only)
-    download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both)
+    download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both, create_mp3)
     print('{} has been successfully downloaded as audio and/or video files separately.'.format(yt.title))
     print()
 
-    merge_streams(destination, convert, download_both, yt.title)
+    merge_streams(destination, merge, download_both, yt.title)
 
 
-def download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, convert):
+def download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, merge, create_mp3):
     yt = None
     try:
         # url input from user
@@ -200,18 +200,18 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, a
     list_selected_youtube_streams(video, audio)
 
     download_both = (audio_only and video_only) or (not audio_only and not video_only)
-    download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both)
+    download_streams_to_dir(destination, audio, video, audio_only, video_only, download_both, create_mp3)
     print('{} has been successfully downloaded as audio and/or video files separately.'.format(yt.title))
     print()
 
-    merge_streams(destination, convert, download_both, yt.title)
+    merge_streams(destination, merge, download_both, yt.title)
 
 
-def main(url, audio_only, video_only, destination, auto, convert):
+def main(url, audio_only, video_only, destination, auto, merge, create_mp3):
     passed = False
     print('Attepting to download video with pytube.')
     try:
-        download_youtube_video_pytube(url, audio_only, video_only, destination, auto, convert)
+        download_youtube_video_pytube(url, audio_only, video_only, destination, auto, merge, create_mp3)
         print('Downloaded video succcessfully with pytube.\n')
         passed = True
     except Exception as ex:
@@ -219,7 +219,7 @@ def main(url, audio_only, video_only, destination, auto, convert):
     if not passed:
         print('Attepting to download video with pytubefix.')
         try:
-            download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, convert)
+            download_youtube_video_pytubefix(url, audio_only, video_only, destination, auto, merge, create_mp3)
             print('Downloaded video succcessfully with pytubefix.\n')
         except Exception as ex:
             print('Failed to download video with pytubefix. Exception is {}\n'.format(ex))
@@ -227,14 +227,15 @@ def main(url, audio_only, video_only, destination, auto, convert):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-ao', '--audio_only', default=0, type=int, help='only audio in mp3 + mp4 format (0 for no [default], 1 for yes)' , choices=(0,1))
+    parser.add_argument('-ao', '--audio_only', default=0, type=int, help='only audio in mp4 format (0 for no [default], 1 for yes)' , choices=(0,1))
     parser.add_argument('-vo', '--video_only', default=0, type=int, help='only video in mp4 format (0 for no [default], 1 for yes)', choices=(0,1))
-    parser.add_argument('-dest', '--destination', default='.', type=str, help='destination directory (absolute path) to download mp4 file to, defaults to current directory')
+    parser.add_argument('-dest', '--destination', default='.', type=str, help='destination directory (absolute path) to download mp4 and mp3 files to, defaults to current directory')
     parser.add_argument('-m', '--merge', default=1, type=int, help='merge audio and video in mp4 format together (0 for no, 1 for yes [default])', choices=(0,1))
     parser.add_argument('-u', '--url', type=str, help='URL of the video to download', required=True)
     parser.add_argument('-a', '--auto', default=1, type=int, help='automatically selects bitrate for both audio and video (0 for no, 1 for yes [default])', choices=(0,1))
+    parser.add_argument('--create_mp3', default=0, type=int, help='creates mp3 file from downloaded mp4 file (0 for no [default], 1 for yes)', choices=(0,1))
     args = parser.parse_args()
     if args.url is None:
         print('Not running script because url was not passed. Please pass in an YouTube video url.')
     else:
-        main(args.url, args.audio_only, args.video_only, args.destination, args.auto, args.merge)
+        main(args.url, args.audio_only, args.video_only, args.destination, args.auto, args.merge, args.create_mp3)
