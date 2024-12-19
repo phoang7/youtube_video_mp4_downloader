@@ -19,8 +19,8 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 
 ## Should I use pytube or pytubefix for downloading videos?
 The current script implementation will first try to download using pytube module. If using pytube fails, then the script will attempt to use pytubefix module to download the video instead.
-It is difficult to detelrmine whether pytube or pytubefix is the better to choice to use due to future possible changes on YouTube's end and whether the maintainers of both modules will update their pacakges respectively when such situations occur.
-You will need to determine whether which option/module works for you and if both modules work then which module suits your needs. It is possible that both modules can be broken. Check pull requests and issues on the respective GitHube repositories to resolve the issue you're facing.
+It is difficult to determine whether pytube or pytubefix is the better to choice to use due to future possible changes on YouTube's end and whether the maintainers of both modules will update their pacakges respectively when such situations occur.
+You will need to determine whether which option/module works for you and if both modules work then which module suits your needs. It is possible that both modules can be broken. Check pull requests and issues on the respective GitHub repositories to resolve the issue you're facing.
 
 
 ## Should I use a virtual environlment?
