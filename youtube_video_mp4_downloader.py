@@ -10,15 +10,12 @@ import re
 def get_clean_video_title(video_title):
     # Remove invalid characters for filenames
     res = re.sub(r'[\/:*?"<>|]', '', video_title)
-
     # Trim and replace spaces with underscores
     res = res.strip().replace(' ', '_')
-
     # Ensure the filename is not too long
     max_filename_length = 255  # Maximum length for most file systems
     if len(res) > max_filename_length:
         res = res[:max_filename_length]
-
     return res
 
 
@@ -109,13 +106,12 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
             audio.download(output_path=dest, filename='audio.mp4')
         else:
             video.download(output_path=dest, filename='video.mp4') if video_only else audio.download(output_path=dest, filename='audio.mp4')
-
         if audio_only or download_both:
             print('Converting mp4 audio to mp3...')
             if is_ffmpeg_installed():
                 mp4_path = os.path.join(dest, 'audio.mp4')
                 mp3_path = os.path.join(dest, 'audio.mp3')
-                subprocess.run('ffmpeg -y -i {} -f mp3 -ab 320000 -vn {}'.format(mp4_path, mp3_path), shell=True)
+                subprocess.run('ffmpeg -loglevel quiet -y -i {mp4_path} -f mp3 -ab 320000 -vn {mp3_path}')
             else:
                 print('ffmpeg is not installed, canceling mp4 to mp3 conversion operation.')
             print()
@@ -125,6 +121,7 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
 
 
 def merge_streams(destination, convert, download_both, title):
+    print('Merging mp4 video and audio streams together...')
     if not is_ffmpeg_installed():
         print('ffmpeg is not installed, canceling merge streams operation.') 
         return
@@ -134,18 +131,16 @@ def merge_streams(destination, convert, download_both, title):
             video_path = os.path.join(dest, 'video.mp4')
             audio_path = os.path.join(dest, 'audio.mp4')
             output_path = os.path.join(dest, 'output.mp4')
-            cmd = 'ffmpeg -y -i {} -i {} -c:v copy -c:a copy {}'
-            subprocess.run(cmd.format(video_path, audio_path, output_path), shell=True)
-
+            cmd = f'ffmpeg -loglevel quiet -y -i {video_path} -i {audio_path} -c:v copy -c:a copy {output_path}'
+            subprocess.run(cmd)
             # result of success
             print('{} has been successfully converted to mp4. Video and audio streams were merged.'
                 .format(title))
             print()
-
             clean_title = get_clean_video_title(title)
             rename_path = os.path.join(dest, f'{clean_title}.mp4')
             os.replace('{}'.format(output_path), '{}'.format(rename_path))
-            print('Merged output file name is {}'.format(clean_title))
+            print('Merged output file name is {}.mp4'.format(clean_title))
         except Exception as ex:
             ex.add_note('ffmpeg merge command or renaming merged output file failed')
             raise
@@ -234,14 +229,12 @@ def main(url, audio_only, video_only, destination, auto, convert):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-
     parser.add_argument('-ao', '--audio_only', default=0, type=int, help='only audio in mp3 + mp4 format (0 for no [default], 1 for yes)' , choices=(0,1))
     parser.add_argument('-vo', '--video_only', default=0, type=int, help='only video in mp4 format (0 for no [default], 1 for yes)', choices=(0,1))
     parser.add_argument('-dest', '--destination', default='.', type=str, help='destination directory (absolute path) to download mp4 file to, defaults to current directory')
     parser.add_argument('-m', '--merge', default=1, type=int, help='merge audio and video in mp4 format together (0 for no, 1 for yes [default])', choices=(0,1))
     parser.add_argument('-u', '--url', type=str, help='URL of the video to download', required=True)
     parser.add_argument('-a', '--auto', default=1, type=int, help='automatically selects bitrate for both audio and video (0 for no, 1 for yes [default])', choices=(0,1))
-
     args = parser.parse_args()
     if args.url is None:
         print('Not running script because url was not passed. Please pass in an YouTube video url.')
