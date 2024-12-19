@@ -111,7 +111,7 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
             if is_ffmpeg_installed():
                 mp4_path = os.path.join(dest, 'audio.mp4')
                 mp3_path = os.path.join(dest, 'audio.mp3')
-                subprocess.run('ffmpeg -loglevel quiet -y -i {mp4_path} -f mp3 -ab 320000 -vn {mp3_path}')
+                subprocess.run(f'ffmpeg -loglevel quiet -y -i {mp4_path} -f mp3 -ab 320000 -vn {mp3_path}')
             else:
                 print('ffmpeg is not installed, canceling mp4 to mp3 conversion operation.')
             print()
