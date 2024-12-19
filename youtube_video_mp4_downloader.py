@@ -174,7 +174,6 @@ def download_youtube_video_pytube(url, audio_only, video_only, destination, auto
     print('{} has been successfully downloaded as audio and/or video files separately.'.format(yt.title))
     print()
 
-    # ffmpeg conversion
     merge_streams(destination, convert, download_both, yt.title)
 
 
@@ -205,7 +204,6 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, a
     print('{} has been successfully downloaded as audio and/or video files separately.'.format(yt.title))
     print()
 
-    # ffmpeg conversion
     merge_streams(destination, convert, download_both, yt.title)
 
 
