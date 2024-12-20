@@ -17,6 +17,7 @@ YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separat
 * --auto flag (defaults to 1) automatically selects bitrate for both audio and video (0 for no, 1 for yes)
 * --create_mp3 flag (deaults to 0) creates mp3 file from downloaded mp4 file (0 for no, 1 for yes)
 * -dest flag (defaults to current directory) sets output directory (absolute path) to download mp4 and mp3 files to
+* -vi flag (defaults to 0) displays extended information (likes, views, video length, publish date, etc.) about the video (0 for no, 1 for yes)
 
 
 ## Should I use pytube or pytubefix for downloading videos?
