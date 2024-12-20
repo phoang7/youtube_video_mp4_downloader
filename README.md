@@ -1,5 +1,5 @@
 # youtube_video_mp4_downloader
-YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separate audio and video mp4 files, then merges them back together (creates up to 4 files if downloading, converting, and merging both audio + video streams). Useful for avoiding ads on the YouTube player. Downloads at highest quality possible for both audio and video automatically, but quality can manually selected for both.
+YouTube Video MP4 Downloader. Downloads and extracts YouTube videos into separate audio and video mp4 files, then merges them back together (creates up to 4 files if downloading, converting, and merging both audio + video streams). Useful for avoiding ads on the YouTube player or storing YouTube videos locally on your device. Downloads at highest quality possible for both audio and video automatically, but quality can manually selected for both.
 
 
 ## Prerequisites
