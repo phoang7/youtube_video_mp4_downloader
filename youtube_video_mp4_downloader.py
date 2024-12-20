@@ -1,7 +1,7 @@
 from pytube import YouTube
-from pytube.cli import on_progress
+from pytube.cli import on_progress as pytube_on_progress
 from pytubefix import YouTube as YouTubeFix
-from pytubefix.cli import on_progress
+from pytubefix.cli import on_progress as pytubefix_on_progress
 from ffmpeg_check import is_ffmpeg_installed
 import argparse
 import os
@@ -152,7 +152,7 @@ def download_youtube_video_pytube(url, audio_only, video_only, destination, auto
     yt = None
     try:
         # url input from user
-        yt = YouTube(url, on_progress_callback=on_progress)
+        yt = YouTube(url, on_progress_callback=pytube_on_progress)
     except Exception as ex:
         print('Failed to create YouTube instance from url {}\n Exception is {}'.format(url, ex))
         print('Exception type: {}.\n'.format(type(ex)))
@@ -183,7 +183,7 @@ def download_youtube_video_pytubefix(url, audio_only, video_only, destination, a
     yt = None
     try:
         # url input from user
-        yt = YouTubeFix(url, on_progress_callback=on_progress)
+        yt = YouTubeFix(url, on_progress_callback=pytubefix_on_progress)
     except Exception as ex:
         print('Failed to create YouTube instance from url {}\n Exception is {}'.format(url, ex))
         print('Exception type: {}.\n'.format(type(ex)))
