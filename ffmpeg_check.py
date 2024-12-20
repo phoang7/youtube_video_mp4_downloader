@@ -8,7 +8,7 @@ def is_ffmpeg_installed():
         version = version_line.split(' ')[2]
         print(f"ffmpeg version: {version}")
         return True
-    except FileNotFoundError:
+    except Exception as ex:
         print("ffmpeg not found or not accessible.")
         return False
 

@@ -138,7 +138,7 @@ def download_streams_to_dir(destination, audio, video, audio_only, video_only, d
                 mp4_path = os.path.join(dest, 'audio.mp4')
                 mp3_path = os.path.join(dest, 'audio.mp3')
                 start = datetime.now()
-                subprocess.run(f'ffmpeg -loglevel quiet -y -i {mp4_path} -f mp3 -ab 320000 -vn {mp3_path}')
+                subprocess.run(f'ffmpeg -loglevel quiet -y -i {mp4_path} -f mp3 -ab 320000 -vn {mp3_path}', shell=True)
                 end = datetime.now()
                 delta = (end - start).total_seconds()
                 print('Time to convert mp4 audio to mp3: {:.03f} seconds'.format(delta))
@@ -164,7 +164,7 @@ def merge_streams(destination, merge, download_both, title):
             output_path = os.path.join(dest, 'output.mp4')
             cmd = f'ffmpeg -loglevel quiet -y -i {video_path} -i {audio_path} -c:v copy -c:a copy {output_path}'
             start = datetime.now()
-            subprocess.run(cmd)
+            subprocess.run(cmd, shell=True)
             end = datetime.now()
             merge_time = (end - start).total_seconds()
             print('{} has been successfully converted to mp4. Video and audio streams were merged.\nTime to merge streams: {:.03f} seconds'
